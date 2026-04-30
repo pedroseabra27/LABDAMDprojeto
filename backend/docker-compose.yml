@@ -1,0 +1,23 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: labdamd-postgres
+    environment:
+      POSTGRES_USER: labdamd
+      POSTGRES_PASSWORD: labdamd
+      POSTGRES_DB: labdamd
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7
+    container_name: labdamd-redis
+    ports:
+      - "6379:6379"
+
+volumes:
+  postgres_data:
