@@ -1,0 +1,170 @@
+{
+  "info": {
+    "name": "LDAMD Agendamentos API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    }
+  ],
+  "item": [
+    {
+      "name": "Criar agendamento",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/bookings",
+          "host": ["{{baseUrl}}"],
+          "path": ["bookings"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"quadraId\": 1,\n  \"clienteId\": 10,\n  \"prestadorId\": 5,\n  \"horarioInicio\": \"2026-05-02T19:00:00Z\"\n}"
+        }
+      },
+      "response": [
+        {
+          "name": "201 Created",
+          "originalRequest": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/bookings",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings"]
+            }
+          },
+          "status": "Created",
+          "code": 201,
+          "_postman_previewlanguage": "json",
+          "body": "{\n  \"id\": 1,\n  \"quadraId\": 1,\n  \"clienteId\": 10,\n  \"prestadorId\": 5,\n  \"horarioInicio\": \"2026-05-02T19:00:00.000Z\",\n  \"status\": \"solicitado\"\n}"
+        }
+      ]
+    },
+    {
+      "name": "Listar agendamentos",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/bookings?clienteId=10",
+          "host": ["{{baseUrl}}"],
+          "path": ["bookings"],
+          "query": [
+            {
+              "key": "clienteId",
+              "value": "10"
+            }
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "200 OK",
+          "originalRequest": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/bookings?clienteId=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings"],
+              "query": [
+                {
+                  "key": "clienteId",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "body": "[\n  {\n    \"id\": 1,\n    \"quadraId\": 1,\n    \"clienteId\": 10,\n    \"prestadorId\": 5,\n    \"horarioInicio\": \"2026-05-02T19:00:00.000Z\",\n    \"status\": \"solicitado\"\n  }\n]"
+        }
+      ]
+    },
+    {
+      "name": "Buscar agendamento por id",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/bookings/1",
+          "host": ["{{baseUrl}}"],
+          "path": ["bookings", "1"]
+        }
+      },
+      "response": [
+        {
+          "name": "200 OK",
+          "originalRequest": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/bookings/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings", "1"]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "body": "{\n  \"id\": 1,\n  \"quadraId\": 1,\n  \"clienteId\": 10,\n  \"prestadorId\": 5,\n  \"horarioInicio\": \"2026-05-02T19:00:00.000Z\",\n  \"status\": \"solicitado\"\n}"
+        }
+      ]
+    },
+    {
+      "name": "Atualizar status do agendamento",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/bookings/1/status",
+          "host": ["{{baseUrl}}"],
+          "path": ["bookings", "1", "status"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"status\": \"confirmado\"\n}"
+        }
+      },
+      "response": [
+        {
+          "name": "200 OK",
+          "originalRequest": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/bookings/1/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings", "1", "status"]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "body": "{\n  \"id\": 1,\n  \"quadraId\": 1,\n  \"clienteId\": 10,\n  \"prestadorId\": 5,\n  \"horarioInicio\": \"2026-05-02T19:00:00.000Z\",\n  \"status\": \"confirmado\"\n}"
+        }
+      ]
+    }
+  ]
+}
