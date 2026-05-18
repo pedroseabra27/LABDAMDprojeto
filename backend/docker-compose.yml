@@ -6,10 +6,10 @@ services:
     container_name: labdamd-postgres
     environment:
       POSTGRES_USER: labdamd
-      POSTGRES_PASSWORD: labdamd
+      POSTGRES_PASSWORD: pedro
       POSTGRES_DB: labdamd
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
