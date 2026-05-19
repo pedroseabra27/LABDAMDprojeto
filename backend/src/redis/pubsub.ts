@@ -28,6 +28,10 @@ export async function initRedisSubscriber() {
     await subscriber.subscribe("agendamento.status_alterado", (message) => {
       console.log("[event] agendamento.status_alterado", message);
     });
+
+    await subscriber.subscribe("agendamento.deletado", (message) => {
+      console.log("[event] agendamento.deletado", message);
+    });
   }
 }
 
