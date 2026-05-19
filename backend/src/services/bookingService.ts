@@ -65,6 +65,19 @@ export async function getBookingById(id: number): Promise<AgendamentoSelect | nu
   return found ?? null;
 }
 
+export async function deleteBookingById(id: number): Promise<AgendamentoSelect | null> {
+  const [deleted] = await db.delete(agendamentos).where(eq(agendamentos.id, id)).returning();
+  if (!deleted) {
+    return null;
+  }
+
+  await publishEvent("agendamento.deletado", {
+    agendamentoId: deleted.id
+  });
+
+  return deleted;
+}
+
 export async function updateBookingStatus(
   id: number,
   status: BookingStatus
