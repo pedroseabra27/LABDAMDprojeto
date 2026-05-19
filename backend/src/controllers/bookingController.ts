@@ -2,6 +2,7 @@ import type { Request, Response } from "express";
 import { z } from "zod";
 import {
   createBooking,
+  deleteBookingById,
   getBookingById,
   listBookings,
   updateBookingStatus,
@@ -96,5 +97,21 @@ export async function updateBookingStatusHandler(req: Request, res: Response) {
     return res.json(updated);
   } catch (error) {
     return res.status(500).json({ error: "failed to update booking status" });
+  }
+}
+
+export async function deleteBookingHandler(req: Request, res: Response) {
+  const id = Number(req.params.id);
+
+  try {
+    const deleted = await deleteBookingById(id);
+
+    if (!deleted) {
+      return res.status(404).json({ error: "booking not found" });
+    }
+
+    return res.json(deleted);
+  } catch (error) {
+    return res.status(500).json({ error: "failed to delete booking" });
   }
 }
