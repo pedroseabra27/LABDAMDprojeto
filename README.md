@@ -1,17 +1,17 @@
-# LABDAMD - Sistema de Agendamento de Quadras e Arbitros
+# LABDAMD - Sistema de Agendamento de Quadras e Árbitros
 
-## Apresentacao e motivacao
-Plataforma distribuida para simplificar o agendamento de quadras esportivas e a contratacao de arbitros. O objetivo e reduzir a fragmentacao na organizacao de eventos esportivos amadores, conectando organizadores e prestadores em um unico ecossistema. A comunicacao e orientada a eventos (EDA), com notificacoes assincronas via mensageria.
+## Apresentação e motivação
+Plataforma distribuída para simplificar o agendamento de quadras esportivas e a contratação de árbitros. O objetivo é reduzir a fragmentação na organização de eventos esportivos amadores, conectando organizadores e prestadores em um único ecossistema. A comunicação é orientada a eventos (EDA), com notificações assíncronas via mensageria.
 
-## Perfis de usuario
-- **Cliente (Organizador da partida):** busca quadras, seleciona horarios e solicita arbitragem.
-- **Prestador (Dono da quadra / Arbitro):** recebe solicitacoes, gerencia agenda e aceita ou recusa demandas.
+## Perfis de usuário
+- **Cliente (Organizador da partida):** busca quadras, seleciona horários e solicita arbitragem.
+- **Prestador (Dono da quadra / Árbitro):** recebe solicitações, gerencia agenda e aceita ou recusa demandas.
 
 ## Principais funcionalidades
-- Criacao de agendamentos com local, data e necessidade de arbitragem.
-- Publicacao de eventos no middleware para notificacoes em tempo real.
-- Atualizacao de status da reserva (ex.: pendente -> confirmado) com retorno ao cliente.
-- Persistencia e consulta do historico de agendamentos.
+- Criação de agendamentos com local, data e necessidade de arbitragem.
+- Publicação de eventos no middleware para notificações em tempo real.
+- Atualização de status da reserva (ex.: pendente -> confirmado) com retorno ao cliente.
+- Persistência e consulta do histórico de agendamentos.
 
 ## Tecnologias
 - **Backend:** Node.js, Express e TypeScript.
