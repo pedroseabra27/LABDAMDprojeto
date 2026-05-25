@@ -18,10 +18,10 @@ Os eventos e seus payloads estão descritos em [docs/eventos.md](docs/eventos.md
 3. O subscriber recebe e registra o evento no terminal.
 
 ## Evidencias (logs/prints)
-- Criação de agendamento: [docs/Sprint 2/evidencias/agendamentoCriado.png](docs/Sprint%202/evidencias/agendamentoCriado.png)
-- Atualização de status (confirmado): [docs/Sprint 2/evidencias/agendamentoConfirmado.png](docs/Sprint%202/evidencias/agendamentoConfirmado.png)
-- Deleção de agendamento: [docs/Sprint 2/evidencias/agendamentoDeletado.png](docs/Sprint%202/evidencias/agendamentoDeletado.png)
-- Atualização de status (recusado, extra): [docs/Sprint 2/evidencias/agendamentoRecusado.png](docs/Sprint%202/evidencias/agendamentoRecusado.png)
+- Criação de agendamento: [evidencias/agendamentoCriado.png](evidencias/agendamentoCriado.png)
+- Atualização de status (confirmado): [evidencias/agendamentoConfirmado.png](evidencias/agendamentoConfirmado.png)
+- Deleção de agendamento: [evidencias/agendamentoDeletado.png](evidencias/agendamentoDeletado.png)
+- Atualização de status (recusado, extra): [evidencias/agendamentoRecusado.png](evidencias/agendamentoRecusado.png)
 
 ## Limites e proximos passos
 - O Redis Pub/Sub é fire-and-forget: não há persistência nem retry automático.
