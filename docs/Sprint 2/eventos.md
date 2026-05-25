@@ -1,28 +1,32 @@
-# Eventos do sistema
+# Documentação dos Eventos — Sistema de Agendamento de Quadras e Árbitros
 
-Este documento descreve os eventos publicados no MOM (Redis Pub/Sub) e seus payloads.
+## Topologia
 
-## Topologia Redis Pub/Sub
-- Cada evento é publicado em um canal com o mesmo nome do evento.
-- O payload e JSON stringificado.
-- O backend atua como publisher e subscriber (logs no terminal).
+- **MOM utilizado:** Redis Pub/Sub
+- **Padrão:** Publish/Subscribe — o produtor publica em um canal; o consumidor escuta esse canal de forma independente e assíncrona.
+- **Payload:** JSON stringificado.
 
-## Fluxo assincrono (resumo)
-1. Um endpoint altera o estado do agendamento (criar, atualizar status, deletar).
-2. O service publica o evento no Redis.
-3. O subscriber recebe e registra no log.
+---
 
-## Endpoints x eventos
+## Tabela de Eventos
 
-| Endpoint | Evento publicado |
-| --- | --- |
-| POST /bookings | agendamento.criado |
-| PATCH /bookings/:id/status | agendamento.status_alterado |
-| DELETE /bookings/:id | agendamento.deletado |
+| Evento | Produtor | Consumidor | Payload JSON | Canal Redis |
+|---|---|---|---|---|
+| `agendamento.criado` | `bookingService` — disparado pelo endpoint `POST /bookings` | Subscriber Redis (registra no log do terminal) | `{ "agendamentoId": 1, "quadraId": 1, "clienteId": 10, "prestadorId": 5, "horarioInicio": "2026-05-02T19:00:00.000Z", "status": "solicitado" }` | `agendamento.criado` |
+| `agendamento.status_alterado` | `bookingService` — disparado pelo endpoint `PATCH /bookings/:id/status` | Subscriber Redis (registra no log do terminal) | `{ "agendamentoId": 1, "status": "confirmado" }` | `agendamento.status_alterado` |
+| `agendamento.deletado` | `bookingService` — disparado pelo endpoint `DELETE /bookings/:id` | Subscriber Redis (registra no log do terminal) | `{ "agendamentoId": 1, "status": "deletado" }` | `agendamento.deletado` |
 
-## 1) agendamento.criado
+---
 
-**Quando ocorre:** ao criar um novo agendamento.
+## Detalhamento dos Eventos
+
+### 1. `agendamento.criado`
+
+**Quando ocorre:** ao criar um novo agendamento via `POST /bookings`.
+
+**Produtor:** `bookingService.createBooking()` — após inserção no banco de dados, publica o evento antes de retornar a resposta ao cliente.
+
+**Consumidor:** Subscriber Redis inicializado em `server.ts` via `initRedisSubscriber()`. Registra a mensagem no log do terminal.
 
 **Payload:**
 ```json
@@ -36,9 +40,15 @@ Este documento descreve os eventos publicados no MOM (Redis Pub/Sub) e seus payl
 }
 ```
 
-## 2) agendamento.status_alterado
+---
 
-**Quando ocorre:** ao atualizar o status de um agendamento.
+### 2. `agendamento.status_alterado`
+
+**Quando ocorre:** ao atualizar o status de um agendamento via `PATCH /bookings/:id/status`.
+
+**Produtor:** `bookingService.updateBookingStatus()` — após atualização no banco de dados.
+
+**Consumidor:** Subscriber Redis. Registra a mudança de status no log do terminal.
 
 **Payload:**
 ```json
@@ -48,9 +58,17 @@ Este documento descreve os eventos publicados no MOM (Redis Pub/Sub) e seus payl
 }
 ```
 
-## 3) agendamento.deletado
+> Valores possíveis de `status`: `"solicitado"`, `"confirmado"`, `"recusado"`, `"concluido"`.
 
-**Quando ocorre:** ao deletar um agendamento.
+---
+
+### 3. `agendamento.deletado`
+
+**Quando ocorre:** ao deletar um agendamento via `DELETE /bookings/:id`.
+
+**Produtor:** `bookingService.deleteBookingById()` — após remoção do banco de dados.
+
+**Consumidor:** Subscriber Redis. Registra a deleção no log do terminal.
 
 **Payload:**
 ```json
@@ -59,3 +77,28 @@ Este documento descreve os eventos publicados no MOM (Redis Pub/Sub) e seus payl
   "status": "deletado"
 }
 ```
+
+---
+
+## Fluxo Assíncrono
+
+```
+[Cliente HTTP]
+     |
+     | POST /bookings  (chamada REST síncrona)
+     v
+[bookingController]
+     |
+     v
+[bookingService]  ──── INSERT no PostgreSQL
+     |
+     | publishEvent("agendamento.criado", payload)
+     v
+[Redis Pub/Sub — canal: agendamento.criado]
+     |
+     | (assíncrono — sem chamada REST)
+     v
+[Subscriber Redis]  ──── console.log("[event] agendamento.criado", payload)
+```
+
+O consumidor (Subscriber) processa a mensagem **independentemente** da requisição HTTP — ele não é chamado diretamente pelo produtor, apenas recebe a mensagem via canal Redis.
