@@ -110,7 +110,10 @@ export async function deleteBookingHandler(req: Request, res: Response) {
       return res.status(404).json({ error: "booking not found" });
     }
 
-    return res.json(deleted);
+    return res.json({
+      agendamentoId: deleted.id,
+      status: "deletado"
+    });
   } catch (error) {
     return res.status(500).json({ error: "failed to delete booking" });
   }
