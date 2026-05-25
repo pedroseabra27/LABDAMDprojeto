@@ -3,7 +3,7 @@
 Este documento descreve os eventos publicados no MOM (Redis Pub/Sub) e seus payloads.
 
 ## Topologia Redis Pub/Sub
-- Cada evento e publicado em um canal com o mesmo nome do evento.
+- Cada evento é publicado em um canal com o mesmo nome do evento.
 - O payload e JSON stringificado.
 - O backend atua como publisher e subscriber (logs no terminal).
 
@@ -60,14 +60,6 @@ Este documento descreve os eventos publicados no MOM (Redis Pub/Sub) e seus payl
 }
 ```
 
-**Resposta do DELETE /bookings/:id:**
-```json
-{
-  "agendamentoId": 1,
-  "status": "deletado"
-}
-```
-
 ## Observacoes
-- Endpoints de leitura (listar, buscar por id) nao publicam eventos.
-- Evidencias de logs estao em [docs/Sprint 2/sprint2.md](docs/Sprint%202/sprint2.md).
+- Endpoints de leitura (listar, buscar por id) não publicam eventos.
+- Evidências de logs estão em [docs/Sprint 2/sprint2.md](docs/Sprint%202/sprint2.md).
