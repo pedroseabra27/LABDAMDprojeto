@@ -1,4 +1,4 @@
-# Relatorio de Integracao - Sprint 2 (MOM)
+# Relatório de Integração - Sprint 2 (MOM)
 
 ## Ferramenta escolhida
 Foi adotado o Redis Pub/Sub como MOM por simplicidade operacional e por atender ao escopo do projeto acadêmico. O objetivo da Sprint 2 é evidenciar a comunicação assíncrona entre publicador e consumidor, o que é atendido pelo modelo de canais do Redis.
