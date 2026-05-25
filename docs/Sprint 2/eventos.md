@@ -55,6 +55,19 @@ Este documento descreve os eventos publicados no MOM (Redis Pub/Sub) e seus payl
 **Payload:**
 ```json
 {
-  "agendamentoId": 1
+  "agendamentoId": 1,
+  "status": "deletado"
 }
 ```
+
+**Resposta do DELETE /bookings/:id:**
+```json
+{
+  "agendamentoId": 1,
+  "status": "deletado"
+}
+```
+
+## Observacoes
+- Endpoints de leitura (listar, buscar por id) nao publicam eventos.
+- Evidencias de logs estao em [docs/Sprint 2/sprint2.md](docs/Sprint%202/sprint2.md).
