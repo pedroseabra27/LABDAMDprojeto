@@ -72,7 +72,8 @@ export async function deleteBookingById(id: number): Promise<AgendamentoSelect |
   }
 
   await publishEvent("agendamento.deletado", {
-    agendamentoId: deleted.id
+    agendamentoId: deleted.id,
+    status: "deletado"
   });
 
   return deleted;
