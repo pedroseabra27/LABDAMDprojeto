@@ -59,7 +59,3 @@ Este documento descreve os eventos publicados no MOM (Redis Pub/Sub) e seus payl
   "status": "deletado"
 }
 ```
-
-## Observacoes
-- Endpoints de leitura (listar, buscar por id) não publicam eventos.
-- Evidências de logs estão em [docs/Sprint 2/sprint2.md](docs/Sprint%202/sprint2.md).
