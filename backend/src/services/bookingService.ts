@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import { db } from "../db";
 import { agendamentos, type AgendamentoSelect } from "../db/schema";
-import { publishEvent } from "../redis/pubsub";
+import { publishEvent } from "../rabbitmq/publisher";
 
 export type BookingStatus = "solicitado" | "confirmado" | "recusado" | "concluido";
 
