@@ -12,7 +12,8 @@ async function startSubscriber() {
 
   await channel.assertExchange(EXCHANGE, "topic", { durable: true });
 
-  const { queue } = await channel.assertQueue("", { exclusive: true });
+
+  const { queue } = await channel.assertQueue("fila_agendamentos", { durable: true });
 
   await channel.bindQueue(queue, EXCHANGE, "agendamento.*");
 
