@@ -2,6 +2,7 @@ import { eq } from "drizzle-orm";
 import { db } from "../db";
 import { agendamentos, type AgendamentoSelect } from "../db/schema";
 import { publishEvent } from "../rabbitmq/publisher";
+import { emitBookingUpdate } from "../socket";
 
 export type BookingStatus = "solicitado" | "confirmado" | "recusado" | "concluido";
 
@@ -97,6 +98,8 @@ export async function updateBookingStatus(
     agendamentoId: updated.id,
     status: updated.status
   });
+
+  emitBookingUpdate(updated.clienteId, updated);
 
   return updated;
 }

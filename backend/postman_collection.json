@@ -6,34 +6,155 @@
   "variable": [
     {
       "key": "baseUrl",
-      "value": "http://localhost:3000"
+      "value": "http://localhost:3001"
     }
   ],
   "item": [
     {
-      "name": "Criar agendamento",
-      "request": {
-        "method": "POST",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          }
-        ],
-        "url": {
-          "raw": "{{baseUrl}}/bookings",
-          "host": ["{{baseUrl}}"],
-          "path": ["bookings"]
-        },
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"quadraId\": 1,\n  \"clienteId\": 10,\n  \"prestadorId\": 5,\n  \"horarioInicio\": \"2026-05-02T19:00:00Z\"\n}"
-        }
-      },
-      "response": [
+      "name": "Usuarios",
+      "item": [
         {
-          "name": "201 Created",
-          "originalRequest": {
+          "name": "Criar usuario",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["users"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"João Silva\",\n  \"email\": \"joao@email.com\",\n  \"tipo\": \"cliente\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Criar prestador",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["users"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Maria Oliveira\",\n  \"email\": \"maria@email.com\",\n  \"tipo\": \"prestador\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Listar usuarios",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["users"]
+            }
+          }
+        },
+        {
+          "name": "Buscar usuario por id",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/users/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "1"]
+            }
+          }
+        },
+        {
+          "name": "Deletar usuario",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/users/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Quadras",
+      "item": [
+        {
+          "name": "Criar quadra",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/courts",
+              "host": ["{{baseUrl}}"],
+              "path": ["courts"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Quadra Society Premium\",\n  \"esporte\": \"Futebol\",\n  \"precoHora\": \"150.00\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Listar quadras",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/courts",
+              "host": ["{{baseUrl}}"],
+              "path": ["courts"]
+            }
+          }
+        },
+        {
+          "name": "Buscar quadra por id",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/courts/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["courts", "1"]
+            }
+          }
+        },
+        {
+          "name": "Deletar quadra",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/courts/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["courts", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Agendamentos",
+      "item": [
+        {
+          "name": "Criar agendamento",
+          "request": {
             "method": "POST",
             "header": [
               {
@@ -45,107 +166,38 @@
               "raw": "{{baseUrl}}/bookings",
               "host": ["{{baseUrl}}"],
               "path": ["bookings"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"quadraId\": 1,\n  \"clienteId\": 1,\n  \"prestadorId\": 2,\n  \"horarioInicio\": \"2026-06-10T19:00:00Z\"\n}"
             }
-          },
-          "status": "Created",
-          "code": 201,
-          "_postman_previewlanguage": "json",
-          "body": "{\n  \"id\": 1,\n  \"quadraId\": 1,\n  \"clienteId\": 10,\n  \"prestadorId\": 5,\n  \"horarioInicio\": \"2026-05-02T19:00:00.000Z\",\n  \"status\": \"solicitado\"\n}"
-        }
-      ]
-    },
-    {
-      "name": "Listar agendamentos",
-      "request": {
-        "method": "GET",
-        "url": {
-          "raw": "{{baseUrl}}/bookings?clienteId=10",
-          "host": ["{{baseUrl}}"],
-          "path": ["bookings"],
-          "query": [
-            {
-              "key": "clienteId",
-              "value": "10"
-            }
-          ]
-        }
-      },
-      "response": [
+          }
+        },
         {
-          "name": "200 OK",
-          "originalRequest": {
+          "name": "Listar agendamentos",
+          "request": {
             "method": "GET",
             "url": {
-              "raw": "{{baseUrl}}/bookings?clienteId=10",
+              "raw": "{{baseUrl}}/bookings",
               "host": ["{{baseUrl}}"],
-              "path": ["bookings"],
-              "query": [
-                {
-                  "key": "clienteId",
-                  "value": "10"
-                }
-              ]
+              "path": ["bookings"]
             }
-          },
-          "status": "OK",
-          "code": 200,
-          "_postman_previewlanguage": "json",
-          "body": "[\n  {\n    \"id\": 1,\n    \"quadraId\": 1,\n    \"clienteId\": 10,\n    \"prestadorId\": 5,\n    \"horarioInicio\": \"2026-05-02T19:00:00.000Z\",\n    \"status\": \"solicitado\"\n  }\n]"
-        }
-      ]
-    },
-    {
-      "name": "Buscar agendamento por id",
-      "request": {
-        "method": "GET",
-        "url": {
-          "raw": "{{baseUrl}}/bookings/1",
-          "host": ["{{baseUrl}}"],
-          "path": ["bookings", "1"]
-        }
-      },
-      "response": [
+          }
+        },
         {
-          "name": "200 OK",
-          "originalRequest": {
+          "name": "Buscar agendamento por id",
+          "request": {
             "method": "GET",
             "url": {
               "raw": "{{baseUrl}}/bookings/1",
               "host": ["{{baseUrl}}"],
               "path": ["bookings", "1"]
             }
-          },
-          "status": "OK",
-          "code": 200,
-          "_postman_previewlanguage": "json",
-          "body": "{\n  \"id\": 1,\n  \"quadraId\": 1,\n  \"clienteId\": 10,\n  \"prestadorId\": 5,\n  \"horarioInicio\": \"2026-05-02T19:00:00.000Z\",\n  \"status\": \"solicitado\"\n}"
-        }
-      ]
-    },
-    {
-      "name": "Atualizar status do agendamento",
-      "request": {
-        "method": "PATCH",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
           }
-        ],
-        "url": {
-          "raw": "{{baseUrl}}/bookings/1/status",
-          "host": ["{{baseUrl}}"],
-          "path": ["bookings", "1", "status"]
         },
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"status\": \"confirmado\"\n}"
-        }
-      },
-      "response": [
         {
-          "name": "200 OK",
-          "originalRequest": {
+          "name": "Atualizar status do agendamento",
+          "request": {
             "method": "PATCH",
             "header": [
               {
@@ -157,12 +209,23 @@
               "raw": "{{baseUrl}}/bookings/1/status",
               "host": ["{{baseUrl}}"],
               "path": ["bookings", "1", "status"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"confirmado\"\n}"
             }
-          },
-          "status": "OK",
-          "code": 200,
-          "_postman_previewlanguage": "json",
-          "body": "{\n  \"id\": 1,\n  \"quadraId\": 1,\n  \"clienteId\": 10,\n  \"prestadorId\": 5,\n  \"horarioInicio\": \"2026-05-02T19:00:00.000Z\",\n  \"status\": \"confirmado\"\n}"
+          }
+        },
+        {
+          "name": "Deletar agendamento",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/bookings/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings", "1"]
+            }
+          }
         }
       ]
     }
