@@ -23,7 +23,23 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       title: 'LDAMD Cliente',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueAccent),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFFC06B52), // Terracota
+          background: const Color(0xFFF9F6F0), // Areia
+        ),
+        fontFamily: 'PTSerif', // Fonte geral serifada
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          centerTitle: true,
+          titleTextStyle: TextStyle(
+            fontFamily: 'Caveat',
+            color: Colors.black87,
+            fontSize: 28,
+            fontWeight: FontWeight.bold,
+          ),
+          iconTheme: IconThemeData(color: Colors.black87),
+        ),
         useMaterial3: true,
       ),
       home: const MainScreen(),

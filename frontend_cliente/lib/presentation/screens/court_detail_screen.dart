@@ -71,42 +71,68 @@ class _CourtDetailScreenState extends State<CourtDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF9F9F9),
       appBar: AppBar(title: Text(widget.court.nome)),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    Text('Esporte: ${widget.court.esporte}', style: const TextStyle(fontSize: 18)),
-                    const SizedBox(height: 8),
-                    Text('Preço: R\$ ${widget.court.precoHora} / hora', style: const TextStyle(fontSize: 18, color: Colors.green)),
-                  ],
-                ),
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.15),
+                    offset: const Offset(0, 4),
+                    blurRadius: 12,
+                    spreadRadius: 2,
+                  ),
+                ],
+              ),
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
+                children: [
+                  Text(
+                    'Esporte: ${widget.court.esporte}', 
+                    style: const TextStyle(fontFamily: 'Caveat', fontSize: 28, fontWeight: FontWeight.bold)
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'R\$ ${widget.court.precoHora} / hora', 
+                    style: const TextStyle(fontSize: 22, color: Color(0xFF4A7C59), fontWeight: FontWeight.bold)
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 32),
             ElevatedButton.icon(
-              icon: const Icon(Icons.calendar_today),
-              label: Text(_selectedDate == null 
-                  ? 'Selecionar Data e Hora' 
-                  : 'Horário: ${_selectedDate.toString().substring(0, 16)}'),
+              icon: const Icon(Icons.calendar_today, color: Colors.white),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFC06B52), // Terracota
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              ),
+              label: Text(
+                _selectedDate == null 
+                    ? 'Selecionar Data e Hora' 
+                    : 'Horário: ${_selectedDate.toString().substring(0, 16)}',
+                style: const TextStyle(fontSize: 18, color: Colors.white)
+              ),
               onPressed: () => _selectDate(context),
             ),
             const Spacer(),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 16),
-                backgroundColor: Colors.blueAccent,
+                backgroundColor: const Color(0xFF4A7C59), // Verde suave
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
               ),
               onPressed: _selectedDate == null || _isBooking ? null : _bookCourt,
               child: _isBooking 
                   ? const CircularProgressIndicator(color: Colors.white)
-                  : const Text('Confirmar Agendamento', style: TextStyle(fontSize: 18, color: Colors.white)),
+                  : const Text('Confirmar Agendamento', style: TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold)),
             ),
           ],
         ),

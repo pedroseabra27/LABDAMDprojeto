@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../domain/models/court.dart';
 import '../providers/app_provider.dart';
 import 'court_detail_screen.dart';
+import '../widgets/modern_card.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -40,8 +41,16 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF9F9F9), // Cinza muito claro / branco off
       appBar: AppBar(
-        title: const Text('Quadras Disponíveis'),
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Image.asset('assets/images/map_icon.png', width: 24, height: 24),
+            const SizedBox(width: 8),
+            const Text('Quadras Disponíveis'),
+          ],
+        ),
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -51,20 +60,44 @@ class _HomeScreenState extends State<HomeScreen> {
                   itemCount: _courts.length,
                   itemBuilder: (context, index) {
                     final court = _courts[index];
-                    return Card(
-                      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      child: ListTile(
-                        title: Text(court.nome, style: const TextStyle(fontWeight: FontWeight.bold)),
-                        subtitle: Text('${court.esporte} - R\$ ${court.precoHora}/h'),
-                        trailing: const Icon(Icons.arrow_forward_ios),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => CourtDetailScreen(court: court),
+                    return ModernCard(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => CourtDetailScreen(court: court),
+                          ),
+                        );
+                      },
+                      child: Row(
+                        children: [
+                          Image.asset('assets/images/map_icon.png', width: 32, height: 32),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  court.nome, 
+                                  style: const TextStyle(
+                                    fontFamily: 'Caveat', 
+                                    fontSize: 24, 
+                                    fontWeight: FontWeight.bold
+                                  )
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  '${court.esporte} - R\$ ${court.precoHora}/h',
+                                  style: TextStyle(
+                                    color: Colors.grey.shade700,
+                                    fontFamily: 'sans-serif'
+                                  ),
+                                ),
+                              ],
                             ),
-                          );
-                        },
+                          ),
+                          const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+                        ],
                       ),
                     );
                   },
