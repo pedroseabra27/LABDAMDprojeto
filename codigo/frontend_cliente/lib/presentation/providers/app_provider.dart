@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_core/models/booking.dart';
+import 'package:shared_core/models/court.dart';
 import 'package:shared_core/services/api_service.dart';
 import 'package:shared_core/services/socket_service.dart';
 
@@ -7,15 +8,17 @@ class AppProvider with ChangeNotifier {
   final ApiService apiService = ApiService();
   final SocketService socketService = SocketService();
 
-  // Vamos hardcodar o clienteId = 1 para facilitar os testes,
-  // mas em um app real isso viria do login.
-  final int currentClienteId = 1;
+  // ID do cliente logado. 0 significa não logado.
+  int currentClienteId = 0;
 
   List<Booking> myBookings = [];
+  List<Court> courts = [];
   bool isLoadingBookings = false;
 
-  AppProvider() {
+  void login(int id) {
+    currentClienteId = id;
     _initSocket();
+    notifyListeners();
   }
 
   void _initSocket() {
@@ -34,12 +37,23 @@ class AppProvider with ChangeNotifier {
     isLoadingBookings = true;
     notifyListeners();
     try {
+      if (courts.isEmpty) {
+        courts = await apiService.getCourts();
+      }
       myBookings = await apiService.getMyBookings(currentClienteId);
     } catch (e) {
       print('Erro ao buscar agendamentos: $e');
     }
     isLoadingBookings = false;
     notifyListeners();
+  }
+
+  String getCourtName(int id) {
+    try {
+      return courts.firstWhere((c) => c.id == id).nome;
+    } catch (_) {
+      return 'Quadra $id';
+    }
   }
 
   Future<void> createBooking(int quadraId, DateTime horario) async {

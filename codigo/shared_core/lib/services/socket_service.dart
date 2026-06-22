@@ -1,10 +1,18 @@
 import 'dart:async';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'dart:io' show Platform;
 import '../models/booking.dart';
+
+String get _getSocketUrl {
+  try {
+    if (Platform.isAndroid) return 'http://10.0.2.2:3001';
+  } catch (_) {}
+  return 'http://127.0.0.1:3001';
+}
 
 class SocketService {
   late IO.Socket socket;
-  final String serverUrl = 'http://10.0.2.2:3001';
+  String get serverUrl => _getSocketUrl;
 
   final _bookingUpdateController = StreamController<Booking>.broadcast();
   Stream<Booking> get onBookingUpdated => _bookingUpdateController.stream;

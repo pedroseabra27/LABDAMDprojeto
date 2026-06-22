@@ -64,7 +64,7 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Quadra ${booking.quadraId}',
+                                  provider.getCourtName(booking.quadraId),
                                   style: const TextStyle(
                                     fontFamily: 'Caveat', 
                                     fontSize: 22, 
@@ -73,7 +73,7 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
-                                  'Data: ${booking.horarioInicio.toString().substring(0, 16)}',
+                                  'Data: ${booking.horarioInicio.toLocal().toString().substring(0, 16)}',
                                   style: TextStyle(
                                     color: Colors.grey.shade700,
                                     fontFamily: 'sans-serif',

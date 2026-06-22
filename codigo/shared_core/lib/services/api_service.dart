@@ -1,12 +1,18 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'dart:io' show Platform;
 import '../models/court.dart';
 import '../models/booking.dart';
 
+String get _getBaseUrl {
+  try {
+    if (Platform.isAndroid) return 'http://10.0.2.2:3001';
+  } catch (_) {}
+  return 'http://127.0.0.1:3001';
+}
+
 class ApiService {
-  // Para Android Emulator use 10.0.2.2. Para Web ou iOS simulator use localhost.
-  // Ajuste para o IP local se rodar em device físico.
-  static const String baseUrl = 'http://10.0.2.2:3001';
+  String get baseUrl => _getBaseUrl;
 
   Future<List<Court>> getCourts() async {
     final response = await http.get(Uri.parse('$baseUrl/courts'));
@@ -35,7 +41,7 @@ class ApiService {
       body: jsonEncode({
         'quadraId': quadraId,
         'clienteId': clienteId,
-        'horarioInicio': horario.toIso8601String(),
+        'horarioInicio': horario.toUtc().toIso8601String(),
       }),
     );
 

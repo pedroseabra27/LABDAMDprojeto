@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'presentation/providers/app_provider.dart';
 import 'presentation/screens/home_screen.dart';
 import 'presentation/screens/my_bookings_screen.dart';
+import 'presentation/screens/login_screen.dart';
 
 void main() {
   runApp(
@@ -42,7 +43,7 @@ class MainApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: const MainScreen(),
+      home: const LoginScreen(),
     );
   }
 }
