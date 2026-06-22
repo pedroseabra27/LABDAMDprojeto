@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
-import '../../domain/models/booking.dart';
+import '../models/booking.dart';
 
 class SocketService {
   late IO.Socket socket;

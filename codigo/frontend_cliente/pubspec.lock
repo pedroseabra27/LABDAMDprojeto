@@ -76,7 +76,7 @@ packages:
     source: sdk
     version: "0.0.0"
   http:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: http
       sha256: "87721a4a50b19c7f1d49001e51409bddc46303966ce89a65af4f4e6004896412"
@@ -179,13 +179,20 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.1.5+1"
+  shared_core:
+    dependency: "direct main"
+    description:
+      path: "../shared_core"
+      relative: true
+    source: path
+    version: "1.0.0"
   sky_engine:
     dependency: transitive
     description: flutter
     source: sdk
     version: "0.0.0"
   socket_io_client:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: socket_io_client
       sha256: "740d3895e220e976570da7dbb2f084cd60dd0c46d174c4a830f9849faec23ef9"

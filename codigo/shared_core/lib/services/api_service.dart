@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import '../../domain/models/court.dart';
-import '../../domain/models/booking.dart';
+import '../models/court.dart';
+import '../models/booking.dart';
 
 class ApiService {
   // Para Android Emulator use 10.0.2.2. Para Web ou iOS simulator use localhost.

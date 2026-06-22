@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../domain/models/court.dart';
+import 'package:shared_core/models/court.dart';
 import '../providers/app_provider.dart';
 import 'court_detail_screen.dart';
 import '../widgets/modern_card.dart';

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../domain/models/booking.dart';
-import '../../data/services/api_service.dart';
-import '../../data/services/socket_service.dart';
+import 'package:shared_core/models/booking.dart';
+import 'package:shared_core/services/api_service.dart';
+import 'package:shared_core/services/socket_service.dart';
 
 class AppProvider with ChangeNotifier {
   final ApiService apiService = ApiService();
