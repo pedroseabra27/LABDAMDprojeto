@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import '../providers/app_provider.dart';
 import '../widgets/modern_card.dart';
 import '../widgets/status_badge.dart';
+import 'login_screen.dart';
+import 'booking_detail_screen.dart';
 
 class MyBookingsScreen extends StatefulWidget {
   const MyBookingsScreen({super.key});
@@ -45,6 +47,17 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
             const Text('Meus Agendamentos'),
           ],
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.exit_to_app, color: Color(0xFFC06B52)),
+            onPressed: () {
+              Provider.of<AppProvider>(context, listen: false).logout();
+              Navigator.of(context, rootNavigator: true).pushReplacement(
+                MaterialPageRoute(builder: (_) => const LoginScreen()),
+              );
+            },
+          ),
+        ],
       ),
       body: provider.isLoadingBookings
           ? const Center(child: CircularProgressIndicator())
@@ -55,6 +68,14 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
                   itemBuilder: (context, index) {
                     final booking = provider.myBookings[index];
                     return ModernCard(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => BookingDetailScreen(booking: booking),
+                          ),
+                        );
+                      },
                       child: Row(
                         children: [
                           const Icon(Icons.sports_soccer, size: 36, color: Color(0xFFC06B52)),

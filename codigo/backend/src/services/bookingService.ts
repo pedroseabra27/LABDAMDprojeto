@@ -1,7 +1,6 @@
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import { db } from "../db";
 import { agendamentos, type AgendamentoSelect } from "../db/schema";
-import { publishEvent } from "../rabbitmq/publisher";
 import { emitBookingUpdate } from "../socket";
 
 export type BookingStatus = "solicitado" | "confirmado" | "recusado" | "concluido";
@@ -31,34 +30,29 @@ export async function createBooking(input: CreateBookingInput): Promise<Agendame
     })
     .returning();
 
-  await publishEvent("agendamento.criado", {
-    agendamentoId: created.id,
-    quadraId: created.quadraId,
-    clienteId: created.clienteId,
-    prestadorId: created.prestadorId,
-    horarioInicio: created.horarioInicio,
-    status: created.status
-  });
-
   return created;
 }
 
 export async function listBookings(filters: ListBookingsFilters): Promise<AgendamentoSelect[]> {
-  let query = db.select().from(agendamentos);
+  const conditions = [];
 
   if (filters.clienteId !== undefined) {
-    query = query.where(eq(agendamentos.clienteId, filters.clienteId));
+    conditions.push(eq(agendamentos.clienteId, filters.clienteId));
   }
 
   if (filters.prestadorId !== undefined) {
-    query = query.where(eq(agendamentos.prestadorId, filters.prestadorId));
+    conditions.push(eq(agendamentos.prestadorId, filters.prestadorId));
   }
 
   if (filters.status !== undefined) {
-    query = query.where(eq(agendamentos.status, filters.status));
+    conditions.push(eq(agendamentos.status, filters.status));
   }
 
-  return query;
+  if (conditions.length === 0) {
+    return db.select().from(agendamentos);
+  }
+
+  return db.select().from(agendamentos).where(and(...conditions));
 }
 
 export async function getBookingById(id: number): Promise<AgendamentoSelect | null> {
@@ -72,10 +66,7 @@ export async function deleteBookingById(id: number): Promise<AgendamentoSelect |
     return null;
   }
 
-  await publishEvent("agendamento.deletado", {
-    agendamentoId: deleted.id,
-    status: "deletado"
-  });
+  emitBookingUpdate(deleted.clienteId, deleted);
 
   return deleted;
 }
@@ -93,11 +84,6 @@ export async function updateBookingStatus(
   if (!updated) {
     return null;
   }
-
-  await publishEvent("agendamento.status_alterado", {
-    agendamentoId: updated.id,
-    status: updated.status
-  });
 
   emitBookingUpdate(updated.clienteId, updated);
 

@@ -1,26 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/app_provider.dart';
-import '../../main.dart';
-import 'register_screen.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _RegisterScreenState extends State<RegisterScreen> {
+  final _nomeController = TextEditingController();
   final _emailController = TextEditingController();
   final _senhaController = TextEditingController();
   bool _isLoading = false;
 
-  Future<void> _handleLogin() async {
+  Future<void> _handleRegister() async {
+    final nome = _nomeController.text.trim();
     final email = _emailController.text.trim();
     final senha = _senhaController.text.trim();
 
-    if (email.isEmpty || senha.isEmpty) {
+    if (nome.isEmpty || email.isEmpty || senha.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Por favor, preencha todos os campos.')),
       );
@@ -30,11 +30,14 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() => _isLoading = true);
 
     try {
-      await Provider.of<AppProvider>(context, listen: false).login(email, senha);
+      final provider = Provider.of<AppProvider>(context, listen: false);
+      await provider.authService.register(nome, email, senha, 'cliente');
+      
       if (mounted) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (_) => const MainScreen()),
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Conta criada com sucesso! Faça seu login.')),
         );
+        Navigator.pop(context); // Volta para o login
       }
     } catch (e) {
       if (mounted) {
@@ -49,6 +52,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void dispose() {
+    _nomeController.dispose();
     _emailController.dispose();
     _senhaController.dispose();
     super.dispose();
@@ -57,7 +61,12 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF4A7C59), // Verde suave
+      backgroundColor: const Color(0xFFF9F9F9),
+      appBar: AppBar(
+        title: const Text('Criar Conta'),
+        backgroundColor: const Color(0xFF4A7C59),
+        foregroundColor: Colors.white,
+      ),
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24.0),
@@ -68,7 +77,7 @@ class _LoginScreenState extends State<LoginScreen> {
               borderRadius: BorderRadius.circular(16),
               boxShadow: const [
                 BoxShadow(
-                  color: Colors.black26,
+                  color: Colors.black12,
                   blurRadius: 10,
                   offset: Offset(0, 4),
                 )
@@ -77,23 +86,25 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.sports_tennis, size: 64, color: Color(0xFFC06B52)),
+                const Icon(Icons.person_add, size: 64, color: Color(0xFFC06B52)),
                 const SizedBox(height: 16),
                 const Text(
-                  'Quadras App',
+                  'Novo Cliente',
                   style: TextStyle(
-                    fontSize: 28,
+                    fontSize: 24,
                     fontWeight: FontWeight.bold,
-                    fontFamily: 'Caveat',
-                    color: Color(0xFF4A7C59),
                   ),
                 ),
-                const SizedBox(height: 8),
-                Text(
-                  'Bem-vindo de volta!',
-                  style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
-                ),
                 const SizedBox(height: 32),
+                TextField(
+                  controller: _nomeController,
+                  decoration: InputDecoration(
+                    labelText: 'Nome Completo',
+                    prefixIcon: const Icon(Icons.person),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                  ),
+                ),
+                const SizedBox(height: 16),
                 TextField(
                   controller: _emailController,
                   decoration: InputDecoration(
@@ -119,25 +130,18 @@ class _LoginScreenState extends State<LoginScreen> {
                   height: 50,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFC06B52), // Terracota
+                      backgroundColor: const Color(0xFF4A7C59),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                     ),
-                    onPressed: _isLoading ? null : _handleLogin,
+                    onPressed: _isLoading ? null : _handleRegister,
                     child: _isLoading
                         ? const CircularProgressIndicator(color: Colors.white)
                         : const Text(
-                            'Entrar',
+                            'Cadastrar',
                             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
                           ),
                   ),
                 ),
-                const SizedBox(height: 16),
-                TextButton(
-                  onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (_) => const RegisterScreen()));
-                  },
-                  child: const Text('Ainda não tem conta? Crie uma aqui.'),
-                )
               ],
             ),
           ),

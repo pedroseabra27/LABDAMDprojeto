@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_core/models/court.dart';
 import '../providers/app_provider.dart';
 import 'court_detail_screen.dart';
+import 'login_screen.dart';
 import '../widgets/modern_card.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -51,6 +52,17 @@ class _HomeScreenState extends State<HomeScreen> {
             const Text('Quadras Disponíveis'),
           ],
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.exit_to_app, color: Color(0xFFC06B52)),
+            onPressed: () {
+              Provider.of<AppProvider>(context, listen: false).logout();
+              Navigator.of(context, rootNavigator: true).pushReplacement(
+                MaterialPageRoute(builder: (_) => const LoginScreen()),
+              );
+            },
+          ),
+        ],
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())

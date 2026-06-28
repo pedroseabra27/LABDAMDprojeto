@@ -21,6 +21,7 @@ class SocketService {
     socket = IO.io(serverUrl, IO.OptionBuilder()
       .setTransports(['websocket'])
       .disableAutoConnect()
+      .enableForceNew()
       .build()
     );
 
@@ -43,6 +44,5 @@ class SocketService {
 
   void disconnect() {
     socket.disconnect();
-    _bookingUpdateController.close();
   }
 }

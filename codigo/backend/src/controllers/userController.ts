@@ -5,6 +5,7 @@ import { createUser, deleteUserById, getUserById, listUsers } from "../services/
 const createUserSchema = z.object({
   nome: z.string().min(1),
   email: z.string().email(),
+  senha: z.string().min(1),
   tipo: z.enum(["cliente", "prestador"])
 });
 

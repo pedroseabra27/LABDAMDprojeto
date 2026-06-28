@@ -14,8 +14,26 @@ String get _getBaseUrl {
 class ApiService {
   String get baseUrl => _getBaseUrl;
 
+  String? _jwtToken;
+
+  void setToken(String token) {
+    _jwtToken = token;
+  }
+
+  void clearToken() {
+    _jwtToken = null;
+  }
+
+  Map<String, String> get _headers {
+    final Map<String, String> headers = {'Content-Type': 'application/json'};
+    if (_jwtToken != null) {
+      headers['Authorization'] = 'Bearer $_jwtToken';
+    }
+    return headers;
+  }
+
   Future<List<Court>> getCourts() async {
-    final response = await http.get(Uri.parse('$baseUrl/courts'));
+    final response = await http.get(Uri.parse('$baseUrl/courts'), headers: _headers);
     if (response.statusCode == 200) {
       final List<dynamic> data = jsonDecode(response.body);
       return data.map((json) => Court.fromJson(json)).toList();
@@ -25,7 +43,7 @@ class ApiService {
   }
 
   Future<List<Booking>> getMyBookings(int clienteId) async {
-    final response = await http.get(Uri.parse('$baseUrl/bookings?clienteId=$clienteId'));
+    final response = await http.get(Uri.parse('$baseUrl/bookings?clienteId=$clienteId'), headers: _headers);
     if (response.statusCode == 200) {
       final List<dynamic> data = jsonDecode(response.body);
       return data.map((json) => Booking.fromJson(json)).toList();
@@ -37,7 +55,7 @@ class ApiService {
   Future<Booking> createBooking(int quadraId, int clienteId, DateTime horario) async {
     final response = await http.post(
       Uri.parse('$baseUrl/bookings'),
-      headers: {'Content-Type': 'application/json'},
+      headers: _headers,
       body: jsonEncode({
         'quadraId': quadraId,
         'clienteId': clienteId,

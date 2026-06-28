@@ -1,29 +1,52 @@
 import 'package:flutter/material.dart';
 import 'package:shared_core/models/booking.dart';
+import 'dart:async';
 import 'package:shared_core/models/court.dart';
 import 'package:shared_core/services/api_service.dart';
 import 'package:shared_core/services/socket_service.dart';
+import 'package:shared_core/services/auth_service.dart';
 
 class AppProvider with ChangeNotifier {
   final ApiService apiService = ApiService();
   final SocketService socketService = SocketService();
+  late final AuthService authService;
 
-  // ID do cliente logado. 0 significa não logado.
+  AppProvider() {
+    authService = AuthService(apiService);
+  }
+
   int currentClienteId = 0;
+  String? userName;
+  String? userEmail;
+
+  StreamSubscription? _socketSubscription;
 
   List<Booking> myBookings = [];
   List<Court> courts = [];
   bool isLoadingBookings = false;
 
-  void login(int id) {
-    currentClienteId = id;
+  Future<void> login(String email, String senha) async {
+    final result = await authService.login(email, senha);
+    currentClienteId = result['usuario']['id'];
+    userName = result['usuario']['nome'];
+    userEmail = result['usuario']['email'];
     _initSocket();
+    notifyListeners();
+  }
+
+  void logout() {
+    authService.logout();
+    currentClienteId = 0;
+    myBookings.clear();
+    socketService.disconnect();
+    _socketSubscription?.cancel();
     notifyListeners();
   }
 
   void _initSocket() {
     socketService.connectAndSubscribe(currentClienteId);
-    socketService.onBookingUpdated.listen((updatedBooking) {
+    _socketSubscription?.cancel();
+    _socketSubscription = socketService.onBookingUpdated.listen((updatedBooking) {
       // Atualiza o agendamento na lista
       final index = myBookings.indexWhere((b) => b.id == updatedBooking.id);
       if (index != -1) {
