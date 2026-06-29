@@ -69,4 +69,28 @@ class ApiService {
       throw Exception('Falha ao criar agendamento');
     }
   }
+
+  Future<List<Booking>> getBookingsForPrestador(int prestadorId) async {
+    final response = await http.get(Uri.parse('$baseUrl/bookings?prestadorId=$prestadorId'), headers: _headers);
+    if (response.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(response.body);
+      return data.map((json) => Booking.fromJson(json)).toList();
+    } else {
+      throw Exception('Falha ao carregar agendamentos do prestador');
+    }
+  }
+
+  Future<Booking> updateBookingStatus(int bookingId, String status) async {
+    final response = await http.patch(
+      Uri.parse('$baseUrl/bookings/$bookingId/status'),
+      headers: _headers,
+      body: jsonEncode({'status': status}),
+    );
+
+    if (response.statusCode == 200) {
+      return Booking.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception('Falha ao atualizar status');
+    }
+  }
 }

@@ -17,6 +17,10 @@ class SocketService {
   final _bookingUpdateController = StreamController<Booking>.broadcast();
   Stream<Booking> get onBookingUpdated => _bookingUpdateController.stream;
 
+  final _newBookingController = StreamController<Booking>.broadcast();
+  Stream<Booking> get onNewBooking => _newBookingController.stream;
+
+  // Conecta como CLIENTE
   void connectAndSubscribe(int clienteId) {
     socket = IO.io(serverUrl, IO.OptionBuilder()
       .setTransports(['websocket'])
@@ -28,18 +32,42 @@ class SocketService {
     socket.connect();
 
     socket.onConnect((_) {
-      print('Connected to Socket.IO Server');
-      // Avisa ao backend que queremos ouvir atualizações deste cliente específico
+      print('[Socket] Conectado como cliente $clienteId');
       socket.emit('subscribe_cliente', clienteId);
     });
 
     socket.on('booking_updated', (data) {
-      print('Recebido update do booking: $data');
+      print('[Socket] booking_updated recebido: $data');
       final updatedBooking = Booking.fromJson(data);
       _bookingUpdateController.add(updatedBooking);
     });
 
-    socket.onDisconnect((_) => print('Disconnected from Socket.IO Server'));
+    socket.onDisconnect((_) => print('[Socket] Desconectado'));
+  }
+
+  // Conecta como PRESTADOR
+  void connectAndSubscribeAsPrestador(int prestadorId) {
+    socket = IO.io(serverUrl, IO.OptionBuilder()
+      .setTransports(['websocket'])
+      .disableAutoConnect()
+      .enableForceNew()
+      .build()
+    );
+
+    socket.connect();
+
+    socket.onConnect((_) {
+      print('[Socket] Conectado como prestador $prestadorId');
+      socket.emit('subscribe_prestador', prestadorId);
+    });
+
+    socket.on('new_booking', (data) {
+      print('[Socket] new_booking recebido: $data');
+      final newBooking = Booking.fromJson(data);
+      _newBookingController.add(newBooking);
+    });
+
+    socket.onDisconnect((_) => print('[Socket] Desconectado'));
   }
 
   void disconnect() {

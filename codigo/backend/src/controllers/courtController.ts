@@ -5,7 +5,8 @@ import { createCourt, deleteCourtById, getCourtById, listCourts } from "../servi
 const createCourtSchema = z.object({
   nome: z.string().min(1),
   esporte: z.string().min(1),
-  precoHora: z.string().regex(/^\d+(\.\d{1,2})?$/, "precoHora deve ser um valor decimal (ex: 100.00)")
+  precoHora: z.string().regex(/^\d+(\.\d{1,2})?$/, "precoHora deve ser um valor decimal (ex: 100.00)"),
+  prestadorId: z.coerce.number().int().positive().optional().nullable()
 });
 
 function zodErrorResponse(error: z.ZodError) {

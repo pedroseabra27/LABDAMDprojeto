@@ -12,7 +12,8 @@ export const quadras = pgTable("quadras", {
   id: serial("id").primaryKey(),
   nome: varchar("nome", { length: 255 }).notNull(),
   esporte: varchar("esporte", { length: 128 }).notNull(),
-  precoHora: decimal("preco_hora", { precision: 10, scale: 2 }).notNull()
+  precoHora: decimal("preco_hora", { precision: 10, scale: 2 }).notNull(),
+  prestadorId: integer("prestador_id").references(() => usuarios.id)
 });
 
 export const agendamentos = pgTable("agendamentos", {

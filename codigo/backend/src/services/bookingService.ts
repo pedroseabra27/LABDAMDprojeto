@@ -1,7 +1,7 @@
 import { eq, and } from "drizzle-orm";
 import { db } from "../db";
-import { agendamentos, type AgendamentoSelect } from "../db/schema";
-import { emitBookingUpdate } from "../socket";
+import { agendamentos, quadras, type AgendamentoSelect } from "../db/schema";
+import { emitBookingUpdate, emitNewBookingToPrestador } from "../socket";
 
 export type BookingStatus = "solicitado" | "confirmado" | "recusado" | "concluido";
 
@@ -19,16 +19,25 @@ export type ListBookingsFilters = {
 };
 
 export async function createBooking(input: CreateBookingInput): Promise<AgendamentoSelect> {
+  // Busca a quadra para descobrir quem é o prestador (dono)
+  const [court] = await db.select().from(quadras).where(eq(quadras.id, input.quadraId));
+  const prestadorId = court?.prestadorId ?? input.prestadorId ?? null;
+
   const [created] = await db
     .insert(agendamentos)
     .values({
       quadraId: input.quadraId,
       clienteId: input.clienteId,
-      prestadorId: input.prestadorId ?? null,
+      prestadorId: prestadorId,
       horarioInicio: input.horarioInicio,
       status: "solicitado"
     })
     .returning();
+
+  // Notifica o prestador via WebSocket
+  if (prestadorId) {
+    emitNewBookingToPrestador(prestadorId, created);
+  }
 
   return created;
 }
@@ -85,6 +94,7 @@ export async function updateBookingStatus(
     return null;
   }
 
+  // Notifica o cliente que o status mudou
   emitBookingUpdate(updated.clienteId, updated);
 
   return updated;
