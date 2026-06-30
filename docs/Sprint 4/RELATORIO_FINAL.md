@@ -87,3 +87,14 @@ O projeto adotou as melhores práticas de separação de responsabilidades (Clea
 ## 6. Conclusão
 
 A Sprint 4 entregou com sucesso um sistema distribuído altamente responsivo. A eliminação do acoplamento temporal através do uso de WebSockets comprovou que a aplicação prática de uma Arquitetura Orientada a Eventos traz benefícios claros para a experiência do usuário, emulando perfeitamente aplicativos modernos do mercado (como Uber ou iFood). A base de código modular (shared_core) também permite uma expansão sustentável para funcionalidades futuras.
+
+---
+
+## 7. Referências Bibliográficas
+
+1. **FLUTTER.** *Flutter Documentation*. Disponível em: <https://flutter.dev/docs>. Acesso em: 29 jun. 2026.
+2. **NODE.JS.** *Node.js v20.x Documentation*. Disponível em: <https://nodejs.org/docs/latest-v20.x/api/>. Acesso em: 29 jun. 2026.
+3. **SOCKET.IO.** *Socket.IO Documentation*. Disponível em: <https://socket.io/docs/v4/>. Acesso em: 29 jun. 2026.
+4. **STOPFORD, Ben.** *Designing Event-Driven Systems: Concepts and Patterns for Streaming Services with Apache Kafka*. 1. ed. Sebastopol, CA: O'Reilly Media, 2018.
+5. **NEWMAN, Sam.** *Building Microservices: Designing Fine-Grained Systems*. 2. ed. Sebastopol, CA: O'Reilly Media, 2021.
+6. **DRIZZLE ORM.** *Drizzle ORM Documentation*. Disponível em: <https://orm.drizzle.team/docs/overview>. Acesso em: 29 jun. 2026.
