@@ -24,6 +24,7 @@ class AppProvider with ChangeNotifier {
   List<Booking> myBookings = [];
   List<Court> courts = [];
   bool isLoadingBookings = false;
+  bool isLoading = false;
 
   Future<void> login(String email, String senha) async {
     final result = await authService.login(email, senha);
@@ -71,6 +72,18 @@ class AppProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> fetchCourts() async {
+    isLoading = true;
+    notifyListeners();
+    try {
+      courts = await apiService.getCourts();
+    } catch (e) {
+      print('Erro ao buscar quadras: $e');
+    }
+    isLoading = false;
+    notifyListeners();
+  }
+
   String getCourtName(int id) {
     try {
       return courts.firstWhere((c) => c.id == id).nome;
@@ -86,6 +99,20 @@ class AppProvider with ChangeNotifier {
       notifyListeners();
     } catch (e) {
       print('Erro ao criar agendamento: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> reviewBooking(int bookingId, int nota, String comentario) async {
+    try {
+      final updated = await apiService.reviewBooking(bookingId, nota, comentario);
+      final index = myBookings.indexWhere((b) => b.id == bookingId);
+      if (index != -1) {
+        myBookings[index] = updated;
+        notifyListeners();
+      }
+    } catch (e) {
+      print('Erro ao avaliar agendamento: $e');
       rethrow;
     }
   }

@@ -14,8 +14,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  List<Court> _courts = [];
-  bool _isLoading = true;
+  String _searchQuery = '';
+  String _selectedSport = 'Todos';
 
   @override
   void initState() {
@@ -26,13 +26,8 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _loadCourts() async {
     final provider = Provider.of<AppProvider>(context, listen: false);
     try {
-      final courts = await provider.apiService.getCourts();
-      setState(() {
-        _courts = courts;
-        _isLoading = false;
-      });
+      await provider.fetchCourts();
     } catch (e) {
-      setState(() => _isLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Erro ao carregar quadras: $e')),
       );
@@ -42,7 +37,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF9F9F9), // Cinza muito claro / branco off
+      backgroundColor: const Color(0xFFF9F9F9),
       appBar: AppBar(
         title: Row(
           mainAxisSize: MainAxisSize.min,
@@ -64,14 +59,69 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : _courts.isEmpty
-              ? const Center(child: Text('Nenhuma quadra encontrada.'))
-              : ListView.builder(
-                  itemCount: _courts.length,
+      body: Consumer<AppProvider>(
+        builder: (context, provider, child) {
+          if (provider.isLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          final filteredCourts = provider.courts.where((c) {
+            final matchesName = c.nome.toLowerCase().contains(_searchQuery.toLowerCase());
+            final matchesSport = _selectedSport == 'Todos' || c.esporte.toLowerCase() == _selectedSport.toLowerCase();
+            return matchesName && matchesSport;
+          }).toList();
+
+          return Column(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(16.0),
+                color: Colors.white,
+                child: Row(
+                  children: [
+                    Expanded(
+                      flex: 2,
+                      child: TextField(
+                        decoration: InputDecoration(
+                          hintText: 'Buscar quadra...',
+                          prefixIcon: const Icon(Icons.search),
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                          contentPadding: const EdgeInsets.symmetric(vertical: 0),
+                        ),
+                        onChanged: (val) => setState(() => _searchQuery = val),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      flex: 1,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton<String>(
+                            value: _selectedSport,
+                            isExpanded: true,
+                            items: ['Todos', 'Tênis', 'Futebol', 'Vôlei'].map((s) {
+                              return DropdownMenuItem(value: s, child: Text(s));
+                            }).toList(),
+                            onChanged: (val) {
+                              if (val != null) setState(() => _selectedSport = val);
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: ListView.builder(
+                  padding: const EdgeInsets.all(16.0),
+                  itemCount: filteredCourts.length,
                   itemBuilder: (context, index) {
-                    final court = _courts[index];
+                    final court = filteredCourts[index];
                     return ModernCard(
                       onTap: () {
                         Navigator.push(
@@ -114,6 +164,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     );
                   },
                 ),
+              ),
+            ],
+          );
+        },
+      ),
     );
   }
 }

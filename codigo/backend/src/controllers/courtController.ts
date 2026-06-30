@@ -6,7 +6,10 @@ const createCourtSchema = z.object({
   nome: z.string().min(1),
   esporte: z.string().min(1),
   precoHora: z.string().regex(/^\d+(\.\d{1,2})?$/, "precoHora deve ser um valor decimal (ex: 100.00)"),
-  prestadorId: z.coerce.number().int().positive().optional().nullable()
+  prestadorId: z.coerce.number().int().positive().optional().nullable(),
+  imagemUrl: z.string().url("URL de imagem inválida").optional().nullable(),
+  endereco: z.string().optional().nullable(),
+  descricao: z.string().optional().nullable()
 });
 
 function zodErrorResponse(error: z.ZodError) {

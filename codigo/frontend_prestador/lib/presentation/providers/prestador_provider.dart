@@ -80,6 +80,14 @@ class PrestadorProvider with ChangeNotifier {
     }
   }
 
+  String? getCourtImageUrl(int id) {
+    try {
+      return courts.firstWhere((c) => c.id == id).imagemUrl;
+    } catch (_) {
+      return null;
+    }
+  }
+
   Future<void> acceptBooking(int bookingId) async {
     try {
       final updated = await apiService.updateBookingStatus(bookingId, 'confirmado');
@@ -113,6 +121,32 @@ class PrestadorProvider with ChangeNotifier {
       notifyListeners();
     } catch (e) {
       print('Erro ao concluir agendamento: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> createCourt({
+    required String nome,
+    required String esporte,
+    required String precoHora,
+    String? imagemUrl,
+    String? endereco,
+    String? descricao,
+  }) async {
+    try {
+      final novaQuadra = await apiService.createCourt(
+        nome: nome,
+        esporte: esporte,
+        precoHora: precoHora,
+        prestadorId: currentPrestadorId,
+        imagemUrl: imagemUrl,
+        endereco: endereco,
+        descricao: descricao,
+      );
+      courts.add(novaQuadra);
+      notifyListeners();
+    } catch (e) {
+      print('Erro ao criar quadra: $e');
       rethrow;
     }
   }

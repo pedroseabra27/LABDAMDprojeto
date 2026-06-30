@@ -13,7 +13,10 @@ export const quadras = pgTable("quadras", {
   nome: varchar("nome", { length: 255 }).notNull(),
   esporte: varchar("esporte", { length: 128 }).notNull(),
   precoHora: decimal("preco_hora", { precision: 10, scale: 2 }).notNull(),
-  prestadorId: integer("prestador_id").references(() => usuarios.id)
+  prestadorId: integer("prestador_id").references(() => usuarios.id),
+  imagemUrl: varchar("imagem_url", { length: 1024 }),
+  endereco: varchar("endereco", { length: 512 }),
+  descricao: varchar("descricao", { length: 2048 })
 });
 
 export const agendamentos = pgTable("agendamentos", {
@@ -22,7 +25,9 @@ export const agendamentos = pgTable("agendamentos", {
   clienteId: integer("cliente_id").references(() => usuarios.id).notNull(),
   prestadorId: integer("prestador_id").references(() => usuarios.id),
   horarioInicio: timestamp("horario_inicio").notNull(),
-  status: varchar("status", { length: 32 }).notNull()
+  status: varchar("status", { length: 32 }).notNull(),
+  nota: integer("nota"),
+  comentarioAvaliacao: varchar("comentario_avaliacao", { length: 1024 })
 });
 
 export type UsuarioInsert = typeof usuarios.$inferInsert;

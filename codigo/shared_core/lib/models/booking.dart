@@ -5,6 +5,8 @@ class Booking {
   final int? prestadorId;
   final DateTime horarioInicio;
   final String status;
+  final int? nota;
+  final String? comentarioAvaliacao;
 
   Booking({
     required this.id,
@@ -13,6 +15,8 @@ class Booking {
     this.prestadorId,
     required this.horarioInicio,
     required this.status,
+    this.nota,
+    this.comentarioAvaliacao,
   });
 
   factory Booking.fromJson(Map<String, dynamic> json) {
@@ -23,6 +27,8 @@ class Booking {
       prestadorId: json['prestadorId'],
       horarioInicio: DateTime.parse(json['horarioInicio']),
       status: json['status'],
+      nota: json['nota'],
+      comentarioAvaliacao: json['comentarioAvaliacao'],
     );
   }
 
@@ -33,6 +39,8 @@ class Booking {
     int? prestadorId,
     DateTime? horarioInicio,
     String? status,
+    int? nota,
+    String? comentarioAvaliacao,
   }) {
     return Booking(
       id: id ?? this.id,
@@ -41,6 +49,8 @@ class Booking {
       prestadorId: prestadorId ?? this.prestadorId,
       horarioInicio: horarioInicio ?? this.horarioInicio,
       status: status ?? this.status,
+      nota: nota ?? this.nota,
+      comentarioAvaliacao: comentarioAvaliacao ?? this.comentarioAvaliacao,
     );
   }
 }

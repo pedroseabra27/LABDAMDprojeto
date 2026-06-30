@@ -93,8 +93,14 @@ class _OngoingScreenState extends State<OngoingScreen> {
                         child: Row(
                           children: [
                             CircleAvatar(
+                              radius: 25,
                               backgroundColor: statusColor.withOpacity(0.15),
-                              child: Icon(Icons.sports_soccer, color: statusColor),
+                              backgroundImage: provider.getCourtImageUrl(booking.quadraId) != null
+                                  ? NetworkImage(provider.getCourtImageUrl(booking.quadraId)!)
+                                  : null,
+                              child: provider.getCourtImageUrl(booking.quadraId) == null
+                                  ? Icon(Icons.sports_soccer, color: statusColor)
+                                  : null,
                             ),
                             const SizedBox(width: 16),
                             Expanded(

@@ -93,4 +93,48 @@ class ApiService {
       throw Exception('Falha ao atualizar status');
     }
   }
+
+  Future<Booking> reviewBooking(int bookingId, int nota, String? comentario) async {
+    final response = await http.patch(
+      Uri.parse('$baseUrl/bookings/$bookingId/review'),
+      headers: _headers,
+      body: jsonEncode({'nota': nota, 'comentarioAvaliacao': comentario}),
+    );
+
+    if (response.statusCode == 200) {
+      return Booking.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception('Falha ao enviar avaliação');
+    }
+  }
+
+  Future<Court> createCourt({
+    required String nome,
+    required String esporte,
+    required String precoHora,
+    required int prestadorId,
+    String? imagemUrl,
+    String? endereco,
+    String? descricao,
+  }) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/courts'),
+      headers: _headers,
+      body: jsonEncode({
+        'nome': nome,
+        'esporte': esporte,
+        'precoHora': precoHora,
+        'prestadorId': prestadorId,
+        'imagemUrl': imagemUrl,
+        'endereco': endereco,
+        'descricao': descricao,
+      }),
+    );
+
+    if (response.statusCode == 201) {
+      return Court.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception('Falha ao criar quadra: ${response.body}');
+    }
+  }
 }

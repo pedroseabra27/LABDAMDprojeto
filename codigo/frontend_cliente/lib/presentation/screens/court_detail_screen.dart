@@ -14,129 +14,176 @@ class CourtDetailScreen extends StatefulWidget {
 
 class _CourtDetailScreenState extends State<CourtDetailScreen> {
   DateTime? _selectedDate;
-  bool _isBooking = false;
+  TimeOfDay? _selectedTime;
 
-  Future<void> _selectDate(BuildContext context) async {
-    final picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime.now(),
-      lastDate: DateTime.now().add(const Duration(days: 30)),
-    );
-    if (picked != null) {
-      final time = await showTimePicker(
-        context: context,
-        initialTime: const TimeOfDay(hour: 19, minute: 0),
+  Future<void> _handleBooking(BuildContext context) async {
+    if (_selectedDate == null || _selectedTime == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Selecione data e hora para agendar.')),
       );
-      if (time != null) {
-        setState(() {
-          _selectedDate = DateTime(
-            picked.year,
-            picked.month,
-            picked.day,
-            time.hour,
-            time.minute,
-          );
-        });
-      }
+      return;
     }
-  }
 
-  Future<void> _bookCourt() async {
-    if (_selectedDate == null) return;
-    
-    setState(() => _isBooking = true);
+    final dataHora = DateTime(
+      _selectedDate!.year,
+      _selectedDate!.month,
+      _selectedDate!.day,
+      _selectedTime!.hour,
+      _selectedTime!.minute,
+    );
+
     try {
-      await Provider.of<AppProvider>(context, listen: false).createBooking(
-        widget.court.id,
-        _selectedDate!,
-      );
-      if (mounted) {
+      await Provider.of<AppProvider>(context, listen: false).createBooking(widget.court.id, dataHora);
+      if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Agendamento solicitado com sucesso!')),
         );
         Navigator.pop(context);
       }
     } catch (e) {
-      if (mounted) {
+      if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erro: $e')),
+          SnackBar(content: Text('Erro: ${e.toString()}')),
         );
       }
-    } finally {
-      if (mounted) setState(() => _isBooking = false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final court = widget.court;
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF9F9F9),
-      appBar: AppBar(title: Text(widget.court.nome)),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      backgroundColor: Theme.of(context).colorScheme.background,
+      appBar: AppBar(
+        title: Text(court.nome),
+      ),
+      body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.15),
-                    offset: const Offset(0, 4),
-                    blurRadius: 12,
-                    spreadRadius: 2,
-                  ),
-                ],
-              ),
+            // Imagem da Quadra
+            if (court.imagemUrl != null && court.imagemUrl!.isNotEmpty)
+              Image.network(
+                court.imagemUrl!,
+                height: 250,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => _buildFallbackImage(),
+              )
+            else
+              _buildFallbackImage(),
+            
+            Padding(
               padding: const EdgeInsets.all(24.0),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Esporte: ${widget.court.esporte}', 
-                    style: const TextStyle(fontFamily: 'Caveat', fontSize: 28, fontWeight: FontWeight.bold)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        court.esporte.toUpperCase(),
+                        style: const TextStyle(color: Color(0xFFC06B52), fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        'R\$ ${court.precoHora} /h',
+                        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.green),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 16),
                   Text(
-                    'R\$ ${widget.court.precoHora} / hora', 
-                    style: const TextStyle(fontSize: 22, color: Color(0xFF4A7C59), fontWeight: FontWeight.bold)
+                    court.nome,
+                    style: const TextStyle(fontFamily: 'Caveat', fontSize: 36, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Endereço
+                  if (court.endereco != null && court.endereco!.isNotEmpty) ...[
+                    Row(
+                      children: [
+                        const Icon(Icons.location_on, color: Colors.grey),
+                        const SizedBox(width: 8),
+                        Expanded(child: Text(court.endereco!, style: const TextStyle(fontSize: 16))),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                  ],
+
+                  // Descrição
+                  if (court.descricao != null && court.descricao!.isNotEmpty) ...[
+                    const Text('Sobre a quadra', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 8),
+                    Text(court.descricao!, style: TextStyle(fontSize: 16, color: Colors.grey.shade700)),
+                    const SizedBox(height: 24),
+                  ],
+
+                  const Divider(),
+                  const SizedBox(height: 16),
+                  
+                  const Text('Fazer Agendamento', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton.icon(
+                          icon: const Icon(Icons.calendar_today),
+                          label: Text(_selectedDate == null ? 'Data' : '${_selectedDate!.day}/${_selectedDate!.month}'),
+                          onPressed: () async {
+                            final date = await showDatePicker(
+                              context: context,
+                              initialDate: DateTime.now(),
+                              firstDate: DateTime.now(),
+                              lastDate: DateTime.now().add(const Duration(days: 30)),
+                            );
+                            if (date != null) setState(() => _selectedDate = date);
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: OutlinedButton.icon(
+                          icon: const Icon(Icons.access_time),
+                          label: Text(_selectedTime == null ? 'Hora' : _selectedTime!.format(context)),
+                          onPressed: () async {
+                            final time = await showTimePicker(
+                              context: context,
+                              initialTime: TimeOfDay.now(),
+                            );
+                            if (time != null) setState(() => _selectedTime = time);
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 32),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 56,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFC06B52),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      ),
+                      onPressed: () => _handleBooking(context),
+                      child: const Text('Confirmar Agendamento', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
+                    ),
                   ),
                 ],
               ),
-            ),
-            const SizedBox(height: 32),
-            ElevatedButton.icon(
-              icon: const Icon(Icons.calendar_today, color: Colors.white),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFC06B52), // Terracota
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-              ),
-              label: Text(
-                _selectedDate == null 
-                    ? 'Selecionar Data e Hora' 
-                    : 'Horário: ${_selectedDate.toString().substring(0, 16)}',
-                style: const TextStyle(fontSize: 18, color: Colors.white)
-              ),
-              onPressed: () => _selectDate(context),
-            ),
-            const Spacer(),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                backgroundColor: const Color(0xFF4A7C59), // Verde suave
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-              ),
-              onPressed: _selectedDate == null || _isBooking ? null : _bookCourt,
-              child: _isBooking 
-                  ? const CircularProgressIndicator(color: Colors.white)
-                  : const Text('Confirmar Agendamento', style: TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold)),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildFallbackImage() {
+    return Container(
+      height: 250,
+      width: double.infinity,
+      color: Colors.grey.shade300,
+      child: const Icon(Icons.sports_tennis, size: 80, color: Colors.grey),
     );
   }
 }

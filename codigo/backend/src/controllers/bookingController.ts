@@ -20,6 +20,11 @@ const statusSchema = z.object({
   status: z.enum(["solicitado", "confirmado", "recusado", "concluido"])
 });
 
+const reviewSchema = z.object({
+  nota: z.number().int().min(1).max(5),
+  comentarioAvaliacao: z.string().max(1024).optional()
+});
+
 function zodErrorResponse(error: z.ZodError) {
   return {
     error: "validation_error",
@@ -97,6 +102,28 @@ export async function updateBookingStatusHandler(req: Request, res: Response) {
     return res.json(updated);
   } catch (error) {
     return res.status(500).json({ error: "failed to update booking status" });
+  }
+}
+
+export async function reviewBookingHandler(req: Request, res: Response) {
+  const id = Number(req.params.id);
+  const parsed = reviewSchema.safeParse(req.body);
+
+  if (!parsed.success) {
+    return res.status(400).json(zodErrorResponse(parsed.error));
+  }
+
+  try {
+    const { reviewBooking } = await import("../services/bookingService");
+    const updated = await reviewBooking(id, parsed.data.nota, parsed.data.comentarioAvaliacao);
+
+    if (!updated) {
+      return res.status(404).json({ error: "booking not found or not completed" });
+    }
+
+    return res.json(updated);
+  } catch (error) {
+    return res.status(500).json({ error: "failed to review booking" });
   }
 }
 

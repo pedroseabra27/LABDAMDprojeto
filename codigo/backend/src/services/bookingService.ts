@@ -99,3 +99,25 @@ export async function updateBookingStatus(
 
   return updated;
 }
+
+export async function reviewBooking(
+  id: number,
+  nota: number,
+  comentarioAvaliacao?: string
+): Promise<AgendamentoSelect | null> {
+  const [booking] = await db.select().from(agendamentos).where(eq(agendamentos.id, id));
+  
+  if (!booking || booking.status !== "concluido") {
+    return null; // Apenas agendamentos concluidos podem ser avaliados
+  }
+
+  const [updated] = await db
+    .update(agendamentos)
+    .set({ nota, comentarioAvaliacao })
+    .where(eq(agendamentos.id, id))
+    .returning();
+
+  emitBookingUpdate(updated.clienteId, updated);
+  
+  return updated;
+}

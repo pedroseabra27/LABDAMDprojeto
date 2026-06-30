@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'presentation/providers/prestador_provider.dart';
 import 'presentation/screens/pending_requests_screen.dart';
 import 'presentation/screens/ongoing_screen.dart';
+import 'presentation/screens/profile_screen.dart';
 import 'presentation/screens/login_screen.dart';
 
 void main() {
@@ -60,6 +61,7 @@ class _PrestadorMainScreenState extends State<PrestadorMainScreen> {
   final List<Widget> _screens = [
     const PendingRequestsScreen(),
     const OngoingScreen(),
+    const ProfileScreen(),
   ];
 
   @override
@@ -71,8 +73,9 @@ class _PrestadorMainScreenState extends State<PrestadorMainScreen> {
         onTap: (index) => setState(() => _currentIndex = index),
         selectedItemColor: const Color(0xFF1B2838),
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.notifications_active), label: 'Solicitações'),
-          BottomNavigationBarItem(icon: Icon(Icons.check_circle), label: 'Em Andamento'),
+          BottomNavigationBarItem(icon: Icon(Icons.list_alt), label: 'Pendentes'),
+          BottomNavigationBarItem(icon: Icon(Icons.play_circle_outline), label: 'Em Andamento'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Perfil'),
         ],
       ),
     );

@@ -22,6 +22,78 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
     });
   }
 
+  void _showReviewDialog(BuildContext context, int bookingId) {
+    int nota = 5;
+    String comentario = '';
+
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        return StatefulBuilder(
+          builder: (context, setStateSB) {
+            return AlertDialog(
+              title: const Text('Avaliar Quadra'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text('De 1 a 5, qual a sua nota?'),
+                  const SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: List.generate(5, (index) {
+                      return IconButton(
+                        icon: Icon(
+                          index < nota ? Icons.star : Icons.star_border,
+                          color: Colors.amber,
+                          size: 32,
+                        ),
+                        onPressed: () {
+                          setStateSB(() => nota = index + 1);
+                        },
+                      );
+                    }),
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    decoration: const InputDecoration(
+                      hintText: 'Deixe um comentário (opcional)',
+                      border: OutlineInputBorder(),
+                    ),
+                    maxLines: 3,
+                    onChanged: (val) => comentario = val,
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx),
+                  child: const Text('Cancelar'),
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFC06B52)),
+                  onPressed: () async {
+                    try {
+                      await Provider.of<AppProvider>(context, listen: false).reviewBooking(bookingId, nota, comentario);
+                      if (ctx.mounted) {
+                        Navigator.pop(ctx);
+                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Avaliação enviada!')));
+                      }
+                    } catch (e) {
+                      if (ctx.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Erro: $e')));
+                      }
+                    }
+                  },
+                  child: const Text('Enviar', style: TextStyle(color: Colors.white)),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
   Color _getStatusColor(String status) {
     switch (status) {
       case 'solicitado': return Colors.orange;
@@ -104,9 +176,36 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
                               ],
                             ),
                           ),
-                          StatusBadge(
-                            label: booking.status, 
-                            baseColor: _getStatusColor(booking.status),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              StatusBadge(
+                                label: booking.status, 
+                                baseColor: _getStatusColor(booking.status),
+                              ),
+                              if (booking.status == 'concluido' && booking.nota == null) ...[
+                                const SizedBox(height: 8),
+                                OutlinedButton.icon(
+                                  icon: const Icon(Icons.star_outline, size: 16, color: Colors.amber),
+                                  label: const Text('Avaliar', style: TextStyle(fontSize: 12)),
+                                  style: OutlinedButton.styleFrom(
+                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                    minimumSize: Size.zero,
+                                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                  ),
+                                  onPressed: () => _showReviewDialog(context, booking.id),
+                                ),
+                              ],
+                              if (booking.nota != null) ...[
+                                const SizedBox(height: 8),
+                                Row(
+                                  children: [
+                                    const Icon(Icons.star, size: 16, color: Colors.amber),
+                                    Text(' ${booking.nota}', style: const TextStyle(fontWeight: FontWeight.bold)),
+                                  ],
+                                ),
+                              ],
+                            ],
                           ),
                         ],
                       ),

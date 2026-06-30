@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'presentation/providers/app_provider.dart';
 import 'presentation/screens/home_screen.dart';
 import 'presentation/screens/my_bookings_screen.dart';
+import 'presentation/screens/profile_screen.dart';
 import 'presentation/screens/login_screen.dart';
 
 void main() {
@@ -60,6 +61,7 @@ class _MainScreenState extends State<MainScreen> {
   final List<Widget> _screens = [
     const HomeScreen(),
     const MyBookingsScreen(),
+    const ProfileScreen(),
   ];
 
   @override
@@ -72,6 +74,7 @@ class _MainScreenState extends State<MainScreen> {
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.sports_tennis), label: 'Quadras'),
           BottomNavigationBarItem(icon: Icon(Icons.list_alt), label: 'Meus Agendamentos'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Perfil'),
         ],
       ),
     );

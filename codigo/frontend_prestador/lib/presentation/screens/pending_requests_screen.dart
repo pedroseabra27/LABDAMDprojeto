@@ -72,9 +72,15 @@ class _PendingRequestsScreenState extends State<PendingRequestsScreen> {
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                       child: ListTile(
                         contentPadding: const EdgeInsets.all(16),
-                        leading: const CircleAvatar(
-                          backgroundColor: Color(0xFFFFF3E0),
-                          child: Icon(Icons.sports_soccer, color: Color(0xFFE67E22)),
+                        leading: CircleAvatar(
+                          radius: 25,
+                          backgroundColor: const Color(0xFFFFF3E0),
+                          backgroundImage: provider.getCourtImageUrl(booking.quadraId) != null
+                              ? NetworkImage(provider.getCourtImageUrl(booking.quadraId)!)
+                              : null,
+                          child: provider.getCourtImageUrl(booking.quadraId) == null
+                              ? const Icon(Icons.sports_soccer, color: Color(0xFFE67E22))
+                              : null,
                         ),
                         title: Text(
                           provider.getCourtName(booking.quadraId),
